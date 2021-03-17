@@ -11,14 +11,14 @@ import (
 	"io"
 	"net/url"
 	"strconv"
-	"strings"
 )
 
 const (
 	ProviderName = "nacos"
 
-	KeyDataId = "DataId"
-	KeyGroup  = "Group"
+	KeyDataId    = "dataId"
+	KeyGroup     = "group"
+	KeyNamespace = "namespace"
 )
 
 var supportedProviders = []string{ProviderName}
@@ -116,9 +116,9 @@ func extractNacosConfig(rp viper.RemoteProvider) (*nacosConfig, error) {
 		}
 	}
 
-	ns := url.Query().Get("namespace")
-	group := url.Query().Get("group")
-	dataId := url.Query().Get("dataId")
+	ns := url.Query().Get(KeyNamespace)
+	group := url.Query().Get(KeyGroup)
+	dataId := url.Query().Get(KeyDataId)
 
 	return &nacosConfig{
 		ServerConfig: constant.ServerConfig{
@@ -174,24 +174,6 @@ func (m *nacosConfigManager) Watch(key string, stop chan bool) <-chan *viper.Rem
 	}(m.client, key, m.group)
 
 	return c
-}
-
-func (m *nacosConfigManager) extractKey(key string) (string, string) {
-	dataId, group := "", ""
-	items := strings.Split(key, "&")
-	for _, item := range items {
-		param := strings.SplitN(item, "=", 2)
-		if strings.ToLower(KeyDataId) == strings.ToLower(param[0]) {
-			dataId = param[1]
-			continue
-		}
-		if strings.ToLower(KeyGroup) == strings.ToLower(param[0]) {
-			group = param[1]
-			continue
-		}
-	}
-	return dataId, group
-
 }
 
 type nacosProvider struct {

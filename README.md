@@ -1,3 +1,9 @@
+# viper-nacos
+## Introduce
+Integrate nacos to viper
+
+## Usage:
+```golang
 package main
 
 import (
@@ -27,3 +33,5 @@ func main() {
 	a := v.Get("test")
 	fmt.Printf("%v\n", a)
 }
+
+```
